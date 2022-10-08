@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using Fluid.Values;
 
 namespace Fluid.Filters
@@ -214,7 +215,7 @@ namespace Fluid.Filters
             }
             else
             {
-                strings = stringInput.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+                strings = stringInput.Split(separator.AsSpan().ToArray(), StringSplitOptions.RemoveEmptyEntries);
             }
 
             var values = new FluidValue[strings.Length];

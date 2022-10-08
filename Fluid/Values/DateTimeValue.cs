@@ -13,6 +13,12 @@ namespace Fluid.Values
         {
             _value = value;
         }
+        public DateTimeValue(DateTime value)
+        {           
+            _value = new(value,TimeSpan.Zero);
+        }
+
+
 
         public override FluidValues Type => FluidValues.DateTime;
 
