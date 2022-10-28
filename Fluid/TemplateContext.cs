@@ -144,7 +144,7 @@ namespace Fluid
         /// <summary>
         /// Gets or sets the delegate to execute when a Capture tag has been evaluated.
         /// </summary>
-        public Func<string, string, ValueTask<string>> Captured { get; set; }
+        public Func<string, string, Task<string>> Captured { get; set; }
 
         /// <summary>
         /// Creates a new isolated child scope. After than any value added to this content object will be released once

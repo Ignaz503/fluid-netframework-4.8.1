@@ -1,4 +1,5 @@
 ﻿using Fluid.Ast;
+using Fluid.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +24,7 @@ namespace Fluid.Parser
 
         public IReadOnlyList<Statement> Statements => _statements;
 
-        public ValueTask RenderAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public Task RenderAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
             if (writer == null)
             {
@@ -44,7 +45,7 @@ namespace Fluid.Parser
             for (var i = 0; i < count; i++)
             {
                 var task = Statements[i].WriteToAsync(writer, encoder, context);
-                if (!task.IsCompletedSuccessfully)
+                if (!task.IsCompletedSuccessfully())
                 {
                     return Awaited(
                         task,
@@ -56,11 +57,11 @@ namespace Fluid.Parser
                 }
             }
 
-            return new ValueTask();
+            return Task.CompletedTask;
         }
 
-        private static async ValueTask Awaited(
-            ValueTask<Completion> task,
+        private static async Task Awaited(
+            Task<Completion> task,
             TextWriter writer,
             TextEncoder encoder,
             TemplateContext context,

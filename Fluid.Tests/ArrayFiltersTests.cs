@@ -3,9 +3,30 @@ using Fluid.Values;
 using Fluid.Filters;
 using Xunit;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Fluid.Tests
 {
+    public class FluidValueTaskEqualtiyComparer : EqualityComparer<Task<FluidValue>>
+    {
+        public static readonly FluidValueTaskEqualtiyComparer Instance = new();
+        private FluidValueTaskEqualtiyComparer() 
+        { }
+
+        public override bool Equals(Task<FluidValue> x, Task<FluidValue> y)
+        {
+            if (x.IsCompleted && !y.IsCompleted || y.IsCompleted && !x.IsCompleted)
+                return false;
+
+            return x.Result.Equals(y.Result);
+
+        }
+
+        public override int GetHashCode(Task<FluidValue> obj) 
+            => obj.GetHashCode();
+    }
+
+
     public class ArrayFiltersTests
     {
         [Fact]
@@ -39,7 +60,7 @@ namespace Fluid.Tests
 
             var result = ArrayFilters.First(input, arguments, context);
 
-            Assert.Equal(new StringValue("a"), result);
+            Assert.Equal(new StringValue("a"), result, FluidValueTaskEqualtiyComparer.Instance);
         }
 
         [Fact]
@@ -69,7 +90,7 @@ namespace Fluid.Tests
 
             var result = ArrayFilters.Last(input, arguments, context);
 
-            Assert.Equal(new StringValue("c"), result);
+            Assert.Equal(new StringValue("c"), result, FluidValueTaskEqualtiyComparer.Instance);
         }
 
         [Fact]

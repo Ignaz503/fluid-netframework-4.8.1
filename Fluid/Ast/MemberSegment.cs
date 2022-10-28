@@ -8,6 +8,6 @@ namespace Fluid.Ast
         /// <summary>
         /// Resolves the member of a <see cref="FluidValue"/> instance.
         /// </summary>
-        public abstract ValueTask<FluidValue> ResolveAsync(FluidValue value, TemplateContext context);
+        public abstract Task<FluidValue> ResolveAsync(FluidValue value, TemplateContext context);
     }
 }

@@ -46,9 +46,9 @@ namespace Fluid.Values
 
         public abstract object ToObjectValue();
 
-        public virtual ValueTask<FluidValue> GetValueAsync(string name, TemplateContext context)
+        public virtual Task<FluidValue> GetValueAsync(string name, TemplateContext context)
         {
-            return new ValueTask<FluidValue>(GetValue(name, context));
+            return Task.FromResult(GetValue(name, context));
         }
 
         protected virtual FluidValue GetValue(string name, TemplateContext context)
@@ -56,12 +56,12 @@ namespace Fluid.Values
             return NilValue.Instance;
         }
 
-        public virtual ValueTask<FluidValue> GetIndexAsync(FluidValue index, TemplateContext context)
+        public virtual Task<FluidValue> GetIndexAsync(FluidValue index, TemplateContext context)
         {
-            return new ValueTask<FluidValue>(GetIndex(index, context));
+            return Task.FromResult(GetIndex(index, context));
         }
 
-        public virtual ValueTask<FluidValue> InvokeAsync(FunctionArguments arguments, TemplateContext context)
+        public virtual Task<FluidValue> InvokeAsync(FunctionArguments arguments, TemplateContext context)
         {
             return NilValue.Instance;
         }
@@ -315,6 +315,6 @@ namespace Fluid.Values
         }
         #endregion
 
-        public static implicit operator ValueTask<FluidValue>(FluidValue value) => new(value);
+        public static implicit operator Task<FluidValue>(FluidValue value) => Task.FromResult(value);
     }
 }

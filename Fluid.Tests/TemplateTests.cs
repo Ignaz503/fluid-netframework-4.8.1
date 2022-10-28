@@ -118,7 +118,7 @@ namespace Fluid.Tests
         public async Task ShouldCustomizeCaptures()
         {
             _parser.TryParse("{% capture foo %}hello <br /> world{% endcapture %}{{ foo }}", out var template, out var error);
-            var result = await template.RenderAsync(new TemplateContext { Captured = (identifier, captured) => new ValueTask<string>(captured.ToUpper()) }, HtmlEncoder.Default);
+            var result = await template.RenderAsync(new TemplateContext { Captured = (identifier, captured) => Task.FromResult(captured.ToUpper()) }, HtmlEncoder.Default);
             Assert.Equal("HELLO <BR /> WORLD", result);
         }
 
@@ -377,12 +377,12 @@ namespace Fluid.Tests
             {
             }
 
-            public override ValueTask<FluidValue> GetIndexAsync(FluidValue index, TemplateContext context)
+            public override Task<FluidValue> GetIndexAsync(FluidValue index, TemplateContext context)
             {
                 return Create(((Person)Value).Firstname + " " + index.ToStringValue(), context.Options);
             }
 
-            public override ValueTask<FluidValue> GetValueAsync(string name, TemplateContext context)
+            public override Task<FluidValue> GetValueAsync(string name, TemplateContext context)
             {
                 return name switch
                 {
@@ -807,7 +807,7 @@ shape: '{{ shape }}'");
             var context = new TemplateContext(options);
             options.MaxSteps = 100;
 
-            await Assert.ThrowsAsync<InvalidOperationException>(() => template.RenderAsync(context).AsTask());
+            await Assert.ThrowsAsync<InvalidOperationException>(() => template.RenderAsync(context));
         }
         
         [Fact]

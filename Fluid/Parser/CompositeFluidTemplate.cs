@@ -21,7 +21,7 @@ namespace Fluid.Parser
 
         public IReadOnlyList<IFluidTemplate> Templates => _templates;
 
-        public async ValueTask RenderAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public async Task RenderAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
             foreach (var template in Templates)
             {

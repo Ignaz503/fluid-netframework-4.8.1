@@ -174,7 +174,7 @@ shape: ''";
             var options = new TemplateOptions() { FileProvider = fileProvider };
             var context = new TemplateContext(options);
 
-            await Assert.ThrowsAsync<InvalidOperationException>(() => new IncludeStatement(_parser, expression).WriteToAsync(sw, HtmlEncoder.Default, context).AsTask());
+            await Assert.ThrowsAsync<InvalidOperationException>(() => new IncludeStatement(_parser, expression).WriteToAsync(sw, HtmlEncoder.Default, context));
         }
 
         [Fact]

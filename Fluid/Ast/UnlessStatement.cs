@@ -19,7 +19,7 @@ namespace Fluid.Ast
         public Expression Condition { get; }
         public ElseStatement Else { get; }
 
-        public override async ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override async Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
             var result = (await Condition.EvaluateAsync(context)).ToBooleanValue();
 

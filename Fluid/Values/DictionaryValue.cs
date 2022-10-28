@@ -54,19 +54,19 @@ namespace Fluid.Values
             return false;
         }
 
-        public override ValueTask<FluidValue> GetValueAsync(string name, TemplateContext context)
+        public override Task<FluidValue> GetValueAsync(string name, TemplateContext context)
         {
             if (name == "size")
             {
-                return new ValueTask<FluidValue>(NumberValue.Create(_value.Count));
+                return Task.FromResult(NumberValue.Create(_value.Count) as FluidValue);
             }
 
             if (!_value.TryGetValue(name, out var fluidValue))
             {
-                return new ValueTask<FluidValue>(NilValue.Instance);
+                return Task.FromResult(NilValue.Instance as FluidValue);
             }
 
-            return new ValueTask<FluidValue>(fluidValue);
+            return Task.FromResult(fluidValue);
         }
 
         protected override FluidValue GetIndex(FluidValue index, TemplateContext context)

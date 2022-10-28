@@ -28,7 +28,7 @@ namespace Fluid.Filters
             return filters;
         }
 
-        public static ValueTask<FluidValue> ToRgb(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ToRgb(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             if (HexColor.TryParse(value, out HexColor hexColor))
@@ -49,7 +49,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> ToHex(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ToHex(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             if (RgbColor.TryParse(value, out RgbColor rgbColor))
@@ -70,7 +70,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> ToHsl(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ToHsl(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             if (HexColor.TryParse(value, out HexColor hexColor))
@@ -91,7 +91,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> ColorExtract(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ColorExtract(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             RgbColor rgbColor;
@@ -127,7 +127,7 @@ namespace Fluid.Filters
             };
         }
 
-        public static ValueTask<FluidValue> ColorModify(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ColorModify(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             bool isRgb = false;
@@ -213,7 +213,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> CalculateBrightness(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> CalculateBrightness(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             RgbColor rgbColor;
@@ -239,7 +239,7 @@ namespace Fluid.Filters
             return NumberValue.Create((decimal) Math.Round(brightness, 2));
         }
 
-        public static ValueTask<FluidValue> ColorSaturate(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ColorSaturate(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             bool isHex = false;
@@ -293,7 +293,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> ColorDesaturate(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ColorDesaturate(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             bool isHex = false;
@@ -347,7 +347,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> ColorLighten(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ColorLighten(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             bool isHex = false;
@@ -401,7 +401,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> ColorDarken(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ColorDarken(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             bool isHex = false;
@@ -456,7 +456,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> GetColorDifference(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> GetColorDifference(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var rgbColor1 = GetRgbColor(input.ToStringValue());
             var rgbColor2 = GetRgbColor(arguments.At(0).ToStringValue());
@@ -474,7 +474,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> GetColorBrightnessDifference(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> GetColorBrightnessDifference(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var rgbColor1 = GetRgbColor(input.ToStringValue());
             var rgbColor2 = GetRgbColor(arguments.At(0).ToStringValue());
@@ -492,7 +492,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> GetColorContrast(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> GetColorContrast(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var rgbColor1 = GetRgbColor(input.ToStringValue());
             var rgbColor2 = GetRgbColor(arguments.At(0).ToStringValue());

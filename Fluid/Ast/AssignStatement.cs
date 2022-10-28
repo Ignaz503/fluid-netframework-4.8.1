@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Fluid.Utils;
 using Fluid.Values;
 
 namespace Fluid.Ast
@@ -17,9 +18,9 @@ namespace Fluid.Ast
 
         public Expression Value { get; }
 
-        public override ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
-            static async ValueTask<Completion> Awaited(ValueTask<FluidValue> task, TemplateContext context, string identifier)
+            static async Task<Completion> Awaited(Task<FluidValue> task, TemplateContext context, string identifier)
             {
                 var value = await task;
                 context.SetValue(identifier, value);
@@ -29,13 +30,13 @@ namespace Fluid.Ast
             context.IncrementSteps();
 
             var task = Value.EvaluateAsync(context);
-            if (!task.IsCompletedSuccessfully)
+            if (!task.IsCompletedSuccessfully())
             {
                 return Awaited(task, context, Identifier);
             }
 
             context.SetValue(Identifier, task.Result);
-            return new ValueTask<Completion>(Completion.Normal);
+            return Task.FromResult(Completion.Normal);
         }
     }
 }

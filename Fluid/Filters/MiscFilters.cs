@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
-using System.Text.Json;
 using Fluid.Values;
-using TimeZoneConverter;
 using System.Threading.Tasks;
 using System.Text;
 using System.IO;
 using System.Reflection;
 
+using Fluid.Json;
+using Fluid.Utils;
+
 namespace Fluid.Filters
 {
+
+
     public static class MiscFilters
     {
         private const char KebabCaseSeparator = '-';
@@ -50,7 +53,7 @@ namespace Fluid.Filters
         /// <summary>
         /// Converts from pascal/camel case to lower kebab-case.
         /// </summary>
-        public static ValueTask<FluidValue> Handleize(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Handleize(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             var result = new StringBuilder();
@@ -114,7 +117,7 @@ namespace Fluid.Filters
             return new StringValue(result.ToString().ToLowerInvariant());
         }
 
-        public static ValueTask<FluidValue> Default(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Default(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var falseCheck = arguments.HasNamed("allow_false") && arguments["allow_false"] == BooleanValue.True;
 
@@ -136,14 +139,14 @@ namespace Fluid.Filters
             return input;
         }
 
-        public static ValueTask<FluidValue> Raw(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Raw(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var stringValue = new StringValue(input.ToStringValue(), false);
 
             return stringValue;
         }
 
-        public static ValueTask<FluidValue> Compact(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Compact(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var compacted = new List<FluidValue>();
             foreach (var value in input.Enumerate(context))
@@ -157,17 +160,17 @@ namespace Fluid.Filters
             return new ArrayValue(compacted);
         }
 
-        public static ValueTask<FluidValue> UrlEncode(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> UrlEncode(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return new StringValue(WebUtility.UrlEncode(input.ToStringValue()));
         }
 
-        public static ValueTask<FluidValue> UrlDecode(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> UrlDecode(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return new StringValue(WebUtility.UrlDecode(input.ToStringValue()));
         }
 
-        public static ValueTask<FluidValue> Base64Encode(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Base64Encode(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
 
@@ -176,7 +179,7 @@ namespace Fluid.Filters
                 : new StringValue(Convert.ToBase64String(Encoding.UTF8.GetBytes(value)));
         }
 
-        public static ValueTask<FluidValue> Base64Decode(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Base64Decode(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
 
@@ -185,7 +188,7 @@ namespace Fluid.Filters
                 : new StringValue(Encoding.UTF8.GetString(Convert.FromBase64String(value)));
         }
 
-        public static ValueTask<FluidValue> Base64UrlSafeEncode(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Base64UrlSafeEncode(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             if (String.IsNullOrEmpty(value))
@@ -203,7 +206,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> Base64UrlSafeDecode(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Base64UrlSafeDecode(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             if (String.IsNullOrEmpty(value))
@@ -222,7 +225,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> StripHtml(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> StripHtml(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var html = input.ToStringValue();
             if (String.IsNullOrEmpty(html))
@@ -263,17 +266,17 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> Escape(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Escape(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return new StringValue(WebUtility.HtmlEncode(input.ToStringValue()));
         }
 
-        public static ValueTask<FluidValue> EscapeOnce(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> EscapeOnce(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return new StringValue(WebUtility.HtmlEncode(WebUtility.HtmlDecode(input.ToStringValue())));
         }
 
-        public static ValueTask<FluidValue> ChangeTimeZone(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> ChangeTimeZone(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (!input.TryGetDateTimeInput(context, out var value))
             {
@@ -287,14 +290,14 @@ namespace Fluid.Filters
 
             var timeZone = arguments.At(0).ToStringValue();
 
-            if (!TZConvert.TryGetTimeZoneInfo(timeZone, out var timeZoneInfo)) return new DateTimeValue(value);
+            if (!TimeZoneHelper.InfoGetter(timeZone, out var timeZoneInfo)) return new DateTimeValue(value);
 
             var result = TimeZoneInfo.ConvertTime(value, timeZoneInfo);
             return new DateTimeValue(result);
         }
 
 
-        public static ValueTask<FluidValue> Date(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Date(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (!input.TryGetDateTimeInput(context, out var value))
             {
@@ -529,7 +532,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> FormatDate(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> FormatDate(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (!input.TryGetDateTimeInput(context, out var value))
             {
@@ -553,7 +556,7 @@ namespace Fluid.Filters
             return new StringValue(value.ToString(format, culture));
         }
 
-        private static async ValueTask WriteJson(Utf8JsonWriter writer, FluidValue input, TemplateContext ctx, HashSet<object> stack = null)
+        private static async Task WriteJson(IUtf8JsonWriter writer, FluidValue input, TemplateContext ctx, HashSet<object> stack = null)
         {
             switch (input.Type)
             {
@@ -669,13 +672,14 @@ namespace Fluid.Filters
             }
         }
 
-        public static async ValueTask<FluidValue> Json(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static async Task<FluidValue> Json(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
+            var options = JsonFactory.OptionsFactory();
+            options.Indented = arguments.At(0).ToBooleanValue();
+
+
             using var ms = new MemoryStream();
-            await using (var writer = new Utf8JsonWriter(ms, new JsonWriterOptions
-            {
-                Indented = arguments.At(0).ToBooleanValue()
-            }))
+            await using (var writer = JsonFactory.WriterFactory(ms, options))
             {
                 await WriteJson(writer, input, context);
             }
@@ -686,7 +690,7 @@ namespace Fluid.Filters
             return new StringValue(json);
         }
 
-        public static ValueTask<FluidValue> FormatNumber(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> FormatNumber(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (arguments.At(0).IsNil())
             {
@@ -705,7 +709,7 @@ namespace Fluid.Filters
             return new StringValue(input.ToNumberValue().ToString(format, culture));
         }
 
-        public static ValueTask<FluidValue> FormatString(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> FormatString(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (input.IsNil())
             {
@@ -726,7 +730,7 @@ namespace Fluid.Filters
             return new StringValue(string.Format(culture, format, parameters));
         }
 
-        public static ValueTask<FluidValue> MD5(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> MD5(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             if (String.IsNullOrEmpty(value))
@@ -746,7 +750,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> Sha1(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Sha1(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             if (String.IsNullOrEmpty(value))
@@ -766,7 +770,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> Sha256(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Sha256(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var value = input.ToStringValue();
             if (String.IsNullOrEmpty(value))

@@ -20,7 +20,7 @@ namespace Fluid.Ast
         private volatile bool _canBeCached = true;
         private volatile FilterArguments _cachedArguments;
 
-        public override async ValueTask<FluidValue> EvaluateAsync(TemplateContext context)
+        public override async Task<FluidValue> EvaluateAsync(TemplateContext context)
         {
             FilterArguments arguments;
 

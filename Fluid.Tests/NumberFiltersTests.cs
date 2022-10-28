@@ -150,7 +150,7 @@ namespace Fluid.Tests
             var arguments = FilterArguments.Empty;
             var context = new TemplateContext();
 
-            Assert.Throws<ParseException>(() => NumberFilters.Modulo(input, arguments, context));
+            Assert.ThrowsAsync<ParseException>(() => NumberFilters.Modulo(input, arguments, context));
         }
 
         [Fact]

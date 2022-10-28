@@ -12,9 +12,9 @@ namespace Fluid.Ast
 
         public FluidValue Value { get; }
 
-        public override ValueTask<FluidValue> EvaluateAsync(TemplateContext context)
+        public override Task<FluidValue> EvaluateAsync(TemplateContext context)
         {
-            return new ValueTask<FluidValue>(Value);
+            return Task.FromResult(Value);
         }
     }
 }

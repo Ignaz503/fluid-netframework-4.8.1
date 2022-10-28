@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Fluid.Utils;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace Fluid.Ast
 
         public Expression Condition { get; }
 
-        public override ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
             // Process statements until next block or end of statements
             for (var i = 0; i < _statements.Count; i++)
@@ -22,7 +23,7 @@ namespace Fluid.Ast
                 context.IncrementSteps();
 
                 var task = _statements[i].WriteToAsync(writer, encoder, context);
-                if (!task.IsCompletedSuccessfully)
+                if (!task.IsCompletedSuccessfully())
                 {
                     return Awaited(task, i + 1, writer, encoder, context);
                 }
@@ -32,15 +33,15 @@ namespace Fluid.Ast
                 {
                     // Stop processing the block statements
                     // We return the completion to flow it to the outer loop
-                    return new ValueTask<Completion>(completion);
+                    return Task.FromResult(completion);
                 }
             }
 
-            return new ValueTask<Completion>(Completion.Normal);
+            return Task.FromResult(Completion.Normal);
         }
 
-        private async ValueTask<Completion> Awaited(
-            ValueTask<Completion> task,
+        private async Task<Completion> Awaited(
+            Task<Completion> task,
             int startIndex,
             TextWriter writer,
             TextEncoder encoder,

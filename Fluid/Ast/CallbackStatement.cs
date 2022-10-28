@@ -10,18 +10,18 @@ namespace Fluid.Ast
     /// </summary>
     public class CallbackStatement : Statement
     {
-        public CallbackStatement(Func<TextWriter, TextEncoder, TemplateContext, ValueTask<Completion>> action)
+        public CallbackStatement(Func<TextWriter, TextEncoder, TemplateContext, Task<Completion>> action)
         {
             Action = action;
         }
 
-        public Func<TextWriter, TextEncoder, TemplateContext, ValueTask<Completion>> Action { get; }
+        public Func<TextWriter, TextEncoder, TemplateContext, Task<Completion>> Action { get; }
 
-        public override ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
             context.IncrementSteps();
 
-            return Action?.Invoke(writer, encoder, context) ?? new ValueTask<Completion>(Completion.Normal);
+            return Action?.Invoke(writer, encoder, context) ?? Task.FromResult(Completion.Normal);
         }
     }
 }

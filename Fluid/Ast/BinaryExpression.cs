@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Fluid.Utils;
 using Fluid.Values;
 
 namespace Fluid.Ast
@@ -20,12 +21,12 @@ namespace Fluid.Ast
         /// <summary>
         /// Evaluates two operands and tries to avoid state machines.
         /// </summary>
-        public override ValueTask<FluidValue> EvaluateAsync(TemplateContext context)
+        public override Task<FluidValue> EvaluateAsync(TemplateContext context)
         {
             var leftTask = Left.EvaluateAsync(context);
             var rightTask = Right.EvaluateAsync(context);
 
-            if (leftTask.IsCompletedSuccessfully && rightTask.IsCompletedSuccessfully)
+            if (leftTask.IsCompletedSuccessfully() && rightTask.IsCompletedSuccessfully())
             {
                 return Evaluate(leftTask.Result, rightTask.Result);
             }
@@ -34,9 +35,9 @@ namespace Fluid.Ast
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private async ValueTask<FluidValue> Awaited(
-            ValueTask<FluidValue> leftTask,
-            ValueTask<FluidValue> rightTask)
+        private async Task<FluidValue> Awaited(
+            Task<FluidValue> leftTask,
+            Task<FluidValue> rightTask)
         {
             var leftValue = await leftTask;
             var rightValue = await rightTask;

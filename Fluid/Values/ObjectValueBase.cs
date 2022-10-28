@@ -44,7 +44,7 @@ namespace Fluid.Values
             return other is ObjectValueBase && ((ObjectValueBase)other).Value == Value;
         }
 
-        public override ValueTask<FluidValue> GetValueAsync(string name, TemplateContext context)
+        public override Task<FluidValue> GetValueAsync(string name, TemplateContext context)
         {
             // The model type has a custom ability to allow any of its members optionally
             _isModelType ??= context.Model != null && context.Model?.ToObjectValue()?.GetType() == Value.GetType();
@@ -70,7 +70,7 @@ namespace Fluid.Values
 
                     if (directValue != null)
                     {
-                        return new ValueTask<FluidValue>(FluidValue.Create(directValue, context.Options));
+                        return Task.FromResult(FluidValue.Create(directValue, context.Options));
                     }
                 }
 
@@ -90,10 +90,10 @@ namespace Fluid.Values
                 }
             }
 
-            return new ValueTask<FluidValue>(NilValue.Instance);
+            return Task.FromResult(NilValue.Instance as FluidValue);
 
 
-            static async ValueTask<FluidValue> Awaited(
+            static async Task<FluidValue> Awaited(
                 IAsyncMemberAccessor asyncAccessor,
                 object value,
                 string n,
@@ -103,7 +103,7 @@ namespace Fluid.Values
             }
         }
 
-        private async ValueTask<FluidValue> GetNestedValueAsync(string name, TemplateContext context)
+        private async Task<FluidValue> GetNestedValueAsync(string name, TemplateContext context)
         {
             var members = name.Split(MemberSeparators);
 
@@ -136,7 +136,7 @@ namespace Fluid.Values
             return FluidValue.Create(target, context.Options);
         }
 
-        public override ValueTask<FluidValue> GetIndexAsync(FluidValue index, TemplateContext context)
+        public override Task<FluidValue> GetIndexAsync(FluidValue index, TemplateContext context)
         {
             return GetValueAsync(index.ToStringValue(), context);
         }

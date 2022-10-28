@@ -34,7 +34,7 @@ namespace Fluid.Ast
 
         public ref readonly TextSpan Text => ref _text;
 
-        public override ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
             if (!_isStripped)
             {
@@ -144,7 +144,7 @@ namespace Fluid.Ast
 
             if (_isEmpty)
             {
-                return new ValueTask<Completion>(Completion.Normal);
+                return Task.FromResult(Completion.Normal);
             }
 
             context.IncrementSteps();
@@ -153,7 +153,7 @@ namespace Fluid.Ast
 
             // Since WriteAsync needs an actual buffer, we created and reused _buffer
 
-            static async ValueTask<Completion> Awaited(Task task)
+            static async Task<Completion> Awaited(Task task)
             {
                 await task;
                 return Completion.Normal;
@@ -165,7 +165,7 @@ namespace Fluid.Ast
                 return Awaited(task);
             }
 
-            return new ValueTask<Completion>(Completion.Normal);
+            return Task.FromResult(Completion.Normal);
         }
     }
 }

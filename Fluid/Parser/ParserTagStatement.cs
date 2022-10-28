@@ -8,9 +8,9 @@ namespace Fluid.Parser
 {
     internal sealed class ParserTagStatement<T> : Statement
     {
-        private readonly Func<T, TextWriter, TextEncoder, TemplateContext, ValueTask<Completion>> _render;
+        private readonly Func<T, TextWriter, TextEncoder, TemplateContext, Task<Completion>> _render;
 
-        public ParserTagStatement(T value, Func<T, TextWriter, TextEncoder, TemplateContext, ValueTask<Completion>> render)
+        public ParserTagStatement(T value, Func<T, TextWriter, TextEncoder, TemplateContext, Task<Completion>> render)
         {
             Value = value;
             _render = render ?? throw new ArgumentNullException(nameof(render));
@@ -18,7 +18,7 @@ namespace Fluid.Parser
 
         public T Value { get; }
 
-        public override ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
             return _render(Value, writer, encoder, context);
         }

@@ -17,7 +17,7 @@ namespace Fluid.Ast
 
         public IReadOnlyList<FunctionCallArgument> Arguments { get; }
 
-        public override async ValueTask<FluidValue> ResolveAsync(FluidValue value, TemplateContext context)
+        public override async Task<FluidValue> ResolveAsync(FluidValue value, TemplateContext context)
         {
             var arguments = _cachedArguments;
 

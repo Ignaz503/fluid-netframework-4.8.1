@@ -16,6 +16,14 @@ To see the corresponding content for v1.0 use [this version](https://github.com/
 
 <br>
 
+## Adation Remarks:
+
+As one of the goals was to have minimal Dll dependencies certain features require some setup.
+E.g. To use JSON functionality one needs to first set the factory methods.
+These are:
+- Fluid.Json.JsonFactory.WriterFactory
+- Fluid.Json.JsonFactory.OptionsFactory;
+
 ## Features
 
 - Very fast Liquid parser and renderer (no-regexp), with few allocations. See [benchmarks](#performance).
@@ -143,7 +151,7 @@ Here is the `downcase` filter as defined in Fluid.
 
 #### Source
 ```csharp
-public static ValueTask<FluidValue> Downcase(FluidValue input, FilterArguments arguments, TemplateContext context)
+public static Task<FluidValue> Downcase(FluidValue input, FilterArguments arguments, TemplateContext context)
 {
     return new StringValue(input.ToStringValue().ToLower());
 }
@@ -217,7 +225,7 @@ private class PersonValue : ObjectValueBase
     {
     }
 
-    public override ValueTask<FluidValue> GetIndexAsync(FluidValue index, TemplateContext context)
+    public override Task<FluidValue> GetIndexAsync(FluidValue index, TemplateContext context)
     {
         return Create(((Person)Value).Firstname + "!!!" + index.ToStringValue(), context.Options);
     }
@@ -526,7 +534,7 @@ namespace Fluid.Tests.Extensibility
         {
         }
 
-        public override async ValueTask<FluidValue> EvaluateAsync(TemplateContext context)
+        public override async Task<FluidValue> EvaluateAsync(TemplateContext context)
         {
             var leftValue = await Left.EvaluateAsync(context);
             var rightValue = await Right.EvaluateAsync(context);
@@ -921,14 +929,14 @@ Now `field` is available as a local property of the template and can be invoked 
 
 Functions are `FluidValue` instances implementing the `InvokeAsync` method. It allows any template to be provided custom function values as part of the model, the `TemplateContext` or globally with options.
 
-A `FunctionValue` type is also available to provide out of the box functions. It takes a delegate that returns a `ValueTask<FluidValue>` as the result.
+A `FunctionValue` type is also available to provide out of the box functions. It takes a delegate that returns a `Task<FluidValue>` as the result.
 
 ```c#
 var lowercase = new FunctionValue((args, context) => 
 {
   var firstArg = args.At(0).ToStringValue();
   var lower = firstArg.ToLowerCase();
-  return new ValueTask<FluidValue>(new StringValue(lower));
+  return Task.FromResult(new StringValue(lower));
 });
 
 var context = new TemplateContext();

@@ -1,5 +1,6 @@
 ﻿using Fluid.Ast;
 using Fluid.Parser;
+using Fluid.Utils;
 using Parlot.Fluent;
 using System;
 using System.Collections.Generic;
@@ -64,10 +65,10 @@ namespace Fluid
             return parser.TryParse(template, out result, out _);
         }
 
-        public static ValueTask<Completion> RenderStatementsAsync(this IReadOnlyList<Statement> statements, TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public static Task<Completion> RenderStatementsAsync(this IReadOnlyList<Statement> statements, TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
-            static async ValueTask<Completion> Awaited(
-                ValueTask<Completion> task,
+            static async Task<Completion> Awaited(
+                Task<Completion> task,
                 int startIndex, 
                 IReadOnlyList<Statement> statements,
                 TextWriter writer,
@@ -102,7 +103,7 @@ namespace Fluid
             {
                 var statement = statements[i];
                 var task = statement.WriteToAsync(writer, encoder, context);
-                if (!task.IsCompletedSuccessfully)
+                if (!task.IsCompletedSuccessfully())
                 {
                     return Awaited(task, i + 1, statements, writer, encoder, context);
                 }
@@ -112,11 +113,11 @@ namespace Fluid
                 {
                     // Stop processing the block statements
                     // We return the completion to flow it to the outer loop
-                    return new ValueTask<Completion>(completion);
+                    return Task.FromResult(completion);
                 }
             }
 
-            return new ValueTask<Completion>(Completion.Normal);
+            return Task.FromResult(Completion.Normal);
         }
     }
 }

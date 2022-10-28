@@ -17,9 +17,9 @@ namespace Fluid.Ast
 
         public ref readonly TextSpan Text => ref _text;
 
-        public override ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
-            static async ValueTask<Completion> Awaited(Task task)
+            static async Task<Completion> Awaited(Task task)
             {
                 await task;
                 return Completion.Normal;
@@ -29,7 +29,7 @@ namespace Fluid.Ast
 
             var task = writer.WriteAsync(_text.ToString());
             return task.IsCompletedSuccessfully()
-                ? new ValueTask<Completion>(Completion.Normal)
+                ? Task.FromResult(Completion.Normal)
                 : Awaited(task);
         }
     }

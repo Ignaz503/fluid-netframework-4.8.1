@@ -3,5 +3,5 @@ using Fluid.Values;
 
 namespace Fluid
 {
-    public delegate ValueTask<FluidValue> FilterDelegate(FluidValue input, FilterArguments arguments, TemplateContext context);
+    public delegate Task<FluidValue> FilterDelegate(FluidValue input, FilterArguments arguments, TemplateContext context);
 }

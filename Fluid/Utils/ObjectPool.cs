@@ -1,9 +1,16 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
 namespace Fluid.Utils
 {
+    public delegate bool TryGetTimeZoneInfo(string timeZone, out TimeZoneInfo info);
+    public static class TimeZoneHelper 
+    {
+        public static TryGetTimeZoneInfo InfoGetter { get; set; }
+    }
+
     /// <summary>
     /// Generic implementation of object pooling pattern with predefined pool size limit. The main
     /// purpose is that limited number of frequently used objects can be kept in the pool for

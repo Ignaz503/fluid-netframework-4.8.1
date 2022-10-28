@@ -44,18 +44,18 @@ namespace Fluid.Values
             return "forloop";
         }
 
-        public override ValueTask<FluidValue> GetValueAsync(string name, TemplateContext context)
+        public override Task<FluidValue> GetValueAsync(string name, TemplateContext context)
         {
             return name switch
             {
-                "length" => new ValueTask<FluidValue>(NumberValue.Create(Length)),
-                "index" => new ValueTask<FluidValue>(NumberValue.Create(Index)),
-                "index0" => new ValueTask<FluidValue>(NumberValue.Create(Index0)),
-                "rindex" => new ValueTask<FluidValue>(NumberValue.Create(RIndex)),
-                "rindex0" => new ValueTask<FluidValue>(NumberValue.Create(RIndex0)),
-                "first" => new ValueTask<FluidValue>(BooleanValue.Create(First)),
-                "last" => new ValueTask<FluidValue>(BooleanValue.Create(Last)),
-                _ => new ValueTask<FluidValue>(NilValue.Instance),
+                "length" => Task.FromResult(NumberValue.Create(Length) as FluidValue),
+                "index" => Task.FromResult(NumberValue.Create(Index) as FluidValue),
+                "index0" => Task.FromResult(NumberValue.Create(Index0) as FluidValue),
+                "rindex" => Task.FromResult(NumberValue.Create(RIndex) as FluidValue),
+                "rindex0" => Task.FromResult(NumberValue.Create(RIndex0) as FluidValue),
+                "first" => Task.FromResult(BooleanValue.Create(First) as FluidValue),
+                "last" => Task.FromResult(BooleanValue.Create(Last) as FluidValue),
+                _ => Task.FromResult(NilValue.Instance as FluidValue),
             };
         }
 

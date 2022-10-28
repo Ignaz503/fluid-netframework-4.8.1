@@ -6,10 +6,10 @@ namespace Fluid.Ast
 {
     public abstract class Statement
     {
-        public static ValueTask<Completion> Break() => new(Completion.Break);
-        public static ValueTask<Completion> Normal() => new(Completion.Normal);
-        public static ValueTask<Completion> Continue() => new(Completion.Continue);
+        public static Task<Completion> Break() => Task.FromResult(Completion.Break);
+        public static Task<Completion> Normal() => Task.FromResult(Completion.Normal);
+        public static Task<Completion> Continue() => Task.FromResult(Completion.Continue);
 
-        public abstract ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context);
+        public abstract Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context);
     }
 }

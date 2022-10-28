@@ -14,7 +14,7 @@ namespace Fluid.Ast
 
         public string Identifier { get; }
 
-        public override ValueTask<FluidValue> ResolveAsync(FluidValue value, TemplateContext context)
+        public override Task<FluidValue> ResolveAsync(FluidValue value, TemplateContext context)
         {
             return value.GetValueAsync(Identifier, context);
         }

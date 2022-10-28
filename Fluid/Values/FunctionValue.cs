@@ -8,22 +8,22 @@ namespace Fluid.Values
 {
     public sealed class FunctionValue : FluidValue
     {
-        public static readonly FunctionValue NoOp = new FunctionValue((_, _) => new ValueTask<FluidValue>(NilValue.Instance));
-        private readonly Func<FunctionArguments, TemplateContext, ValueTask<FluidValue>> _action;
+        public static readonly FunctionValue NoOp = new FunctionValue((_, _) => Task.FromResult(NilValue.Instance as FluidValue));
+        private readonly Func<FunctionArguments, TemplateContext, Task<FluidValue>> _action;
 
-        public FunctionValue(Func<FunctionArguments, TemplateContext, ValueTask<FluidValue>> asyncAction)
+        public FunctionValue(Func<FunctionArguments, TemplateContext, Task<FluidValue>> asyncAction)
         {
             _action = asyncAction;
         }
 
         public FunctionValue(Func<FunctionArguments, TemplateContext, FluidValue> action)
         {
-            _action = (args, c) => new ValueTask<FluidValue>(action(args, c)); 
+            _action = (args, c) => Task.FromResult(action(args, c)); 
         }
 
         public override FluidValues Type => FluidValues.Object;
 
-        public override ValueTask<FluidValue> InvokeAsync(FunctionArguments arguments, TemplateContext context)
+        public override Task<FluidValue> InvokeAsync(FunctionArguments arguments, TemplateContext context)
         {
             return _action == null ? NilValue.Instance : _action(arguments, context);
         }

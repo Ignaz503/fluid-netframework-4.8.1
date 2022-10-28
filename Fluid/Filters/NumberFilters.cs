@@ -23,31 +23,31 @@ namespace Fluid.Filters
             return filters;
         }
 
-        public static ValueTask<FluidValue> Abs(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Abs(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return NumberValue.Create(Math.Abs(input.ToNumberValue()));
         }
 
-        public static ValueTask<FluidValue> AtLeast(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> AtLeast(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var first = arguments.At(0);
 
             return input.ToNumberValue() < first.ToNumberValue() ? first : input;
         }
 
-        public static ValueTask<FluidValue> AtMost(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> AtMost(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var first = arguments.At(0);
 
             return input.ToNumberValue() > first.ToNumberValue() ? first : input;
         }
 
-        public static ValueTask<FluidValue> Ceil(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Ceil(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return NumberValue.Create(decimal.Ceiling(input.ToNumberValue()));
         }
 
-        public static ValueTask<FluidValue> DividedBy(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> DividedBy(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var first = arguments.At(0);
             decimal divisor = first.ToNumberValue();
@@ -65,17 +65,17 @@ namespace Fluid.Filters
             return NumberValue.Create(result);
         }
 
-        public static ValueTask<FluidValue> Floor(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Floor(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return NumberValue.Create(decimal.Floor(input.ToNumberValue()));
         }
 
-        public static ValueTask<FluidValue> Minus(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Minus(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return NumberValue.Create(input.ToNumberValue() - arguments.At(0).ToNumberValue());
         }
 
-        public static ValueTask<FluidValue> Modulo(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Modulo(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (arguments.Count == 0)
             {
@@ -85,18 +85,18 @@ namespace Fluid.Filters
             return NumberValue.Create(Convert.ToInt32(input.ToNumberValue()) % Convert.ToInt32(arguments.At(0).ToNumberValue()));
         }
 
-        public static ValueTask<FluidValue> Plus(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Plus(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return NumberValue.Create(input.ToNumberValue() + arguments.At(0).ToNumberValue());
         }
 
-        public static ValueTask<FluidValue> Round(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Round(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var digits = Convert.ToInt32(arguments.At(0).Or(NumberValue.Zero).ToNumberValue());
             return NumberValue.Create(Math.Round(input.ToNumberValue(), digits));
         }
 
-        public static ValueTask<FluidValue> Times(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Times(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             var first = arguments.At(0);
 

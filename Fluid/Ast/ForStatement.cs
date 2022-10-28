@@ -42,7 +42,7 @@ namespace Fluid.Ast
         public bool Reversed { get; }
         public Statement Else { get; }
 
-        public override async ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override async Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
             var source = (await Source.EvaluateAsync(context)).Enumerate(context).ToList();
 

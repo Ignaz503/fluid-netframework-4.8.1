@@ -1,4 +1,5 @@
 ﻿using Fluid.Ast.BinaryExpressions;
+using Fluid.Utils;
 using Fluid.Values;
 using System;
 using System.Runtime.CompilerServices;
@@ -18,14 +19,14 @@ namespace Fluid.Ast
 
         public Expression To { get; }
 
-        public override ValueTask<FluidValue> EvaluateAsync(TemplateContext context)
+        public override Task<FluidValue> EvaluateAsync(TemplateContext context)
         {
             int start, end;
 
             var startTask = From.EvaluateAsync(context);
             var endTask = To.EvaluateAsync(context);
 
-            if (startTask.IsCompletedSuccessfully && endTask.IsCompletedSuccessfully)
+            if (startTask.IsCompletedSuccessfully() && endTask.IsCompletedSuccessfully())
             {
                 start = Convert.ToInt32(startTask.Result.ToNumberValue());
                 end = Convert.ToInt32(endTask.Result.ToNumberValue());
@@ -52,9 +53,9 @@ namespace Fluid.Ast
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private async ValueTask<FluidValue> Awaited(
-            ValueTask<FluidValue> leftTask,
-            ValueTask<FluidValue> rightTask)
+        private async Task<FluidValue> Awaited(
+            Task<FluidValue> leftTask,
+            Task<FluidValue> rightTask)
         {
             var start = Convert.ToInt32((await leftTask).ToNumberValue());
             var end = Convert.ToInt32((await rightTask).ToNumberValue());

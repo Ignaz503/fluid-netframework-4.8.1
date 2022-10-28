@@ -26,7 +26,7 @@ namespace Fluid.Ast
         public Expression Group { get; }
         public IList<Expression> Values2 { get; }
 
-        public override async ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override async Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
             context.IncrementSteps();
 

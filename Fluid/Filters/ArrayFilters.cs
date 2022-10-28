@@ -24,7 +24,7 @@ namespace Fluid.Filters
             return filters;
         }
 
-        public static ValueTask<FluidValue> Join(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Join(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (input.Type != FluidValues.Array)
             {
@@ -37,17 +37,17 @@ namespace Fluid.Filters
             return new StringValue(joined);
         }
 
-        public static ValueTask<FluidValue> First(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> First(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return input.GetValueAsync("first", context);
         }
 
-        public static ValueTask<FluidValue> Last(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Last(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return input.GetValueAsync("last", context);
         }
 
-        public static ValueTask<FluidValue> Concat(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Concat(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (input.Type != FluidValues.Array)
             {
@@ -74,7 +74,7 @@ namespace Fluid.Filters
             return new ArrayValue(concat);
         }
 
-        public static async ValueTask<FluidValue> Map(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static async Task<FluidValue> Map(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (input.Type != FluidValues.Array)
             {
@@ -93,7 +93,7 @@ namespace Fluid.Filters
             return new ArrayValue(list);
         }
 
-        public static ValueTask<FluidValue> Reverse(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Reverse(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (input.Type == FluidValues.Array)
             {
@@ -122,7 +122,7 @@ namespace Fluid.Filters
         }
 
         // https://github.com/Shopify/liquid/commit/842986a9721de11e71387732be51951285225977
-        public static async ValueTask<FluidValue> Where(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static async Task<FluidValue> Where(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (input.Type != FluidValues.Array)
             {
@@ -150,12 +150,12 @@ namespace Fluid.Filters
             return new ArrayValue(list);
         }
 
-        public static ValueTask<FluidValue> Size(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Size(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return input.GetValueAsync("size", context);
         }
 
-        public static async ValueTask<FluidValue> Sort(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static async Task<FluidValue> Sort(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (arguments.Count > 0)
             {
@@ -181,7 +181,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static async ValueTask<FluidValue> SortNatural(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static async Task<FluidValue> SortNatural(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             if (arguments.Count > 0)
             {
@@ -207,7 +207,7 @@ namespace Fluid.Filters
             }
         }
 
-        public static ValueTask<FluidValue> Uniq(FluidValue input, FilterArguments arguments, TemplateContext context)
+        public static Task<FluidValue> Uniq(FluidValue input, FilterArguments arguments, TemplateContext context)
         {
             return new ArrayValue(input.Enumerate(context).Distinct().ToArray());
         }

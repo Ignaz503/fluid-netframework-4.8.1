@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Fluid.Utils;
 using Fluid.Values;
 
 namespace Fluid.Ast
@@ -17,10 +18,10 @@ namespace Fluid.Ast
 
         public IList<FilterExpression> Filters { get ; }
 
-        public override ValueTask<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
+        public override Task<Completion> WriteToAsync(TextWriter writer, TextEncoder encoder, TemplateContext context)
         {
-            static async ValueTask<Completion> Awaited(
-                ValueTask<FluidValue> t,
+            static async Task<Completion> Awaited(
+                Task<FluidValue> t,
                 TextWriter w,
                 TextEncoder enc,
                 TemplateContext ctx)
@@ -33,10 +34,10 @@ namespace Fluid.Ast
             context.IncrementSteps();
 
             var task = Expression.EvaluateAsync(context);
-            if (task.IsCompletedSuccessfully)
+            if (task.IsCompletedSuccessfully())
             {
                 task.Result.WriteTo(writer, encoder, context.CultureInfo);
-                return new ValueTask<Completion>(Completion.Normal);
+                return Task.FromResult(Completion.Normal);
             }
 
             return Awaited(task, writer, encoder, context);

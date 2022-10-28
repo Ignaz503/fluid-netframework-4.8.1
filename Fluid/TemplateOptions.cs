@@ -65,7 +65,7 @@ namespace Fluid
         /// <summary>
         /// Gets or sets the delegate to execute when a Capture tag has been evaluated.
         /// </summary>
-        public Func<string, string, ValueTask<string>> Captured { get; set; }
+        public Func<string, string, Task<string>> Captured { get; set; }
 
         /// <summary>
         /// Gets or sets the default trimming rules.

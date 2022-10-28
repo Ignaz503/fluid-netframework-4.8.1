@@ -9,7 +9,7 @@ namespace Fluid
     public static class FluidTemplateExtensions
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ValueTask<string> RenderAsync(this IFluidTemplate template, TemplateContext context)
+        public static Task<string> RenderAsync(this IFluidTemplate template, TemplateContext context)
         {
             return template.RenderAsync(context, NullEncoder.Default);
         }
@@ -18,21 +18,21 @@ namespace Fluid
         public static string Render(this IFluidTemplate template, TemplateContext context, TextEncoder encoder)
         {
             var task = template.RenderAsync(context, encoder);
-            return task.IsCompletedSuccessfully ? task.Result : task.AsTask().GetAwaiter().GetResult();
+            return task.IsCompletedSuccessfully() ? task.Result : task.GetAwaiter().GetResult();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Render(this IFluidTemplate template, TemplateContext context, TextEncoder encoder, TextWriter writer)
         {
             var task = template.RenderAsync(writer, encoder, context);
-            if (!task.IsCompletedSuccessfully)
+            if (!task.IsCompletedSuccessfully())
             {
-                task.AsTask().GetAwaiter().GetResult();
+                task.GetAwaiter().GetResult();
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static async ValueTask<string> RenderAsync(this IFluidTemplate template, TemplateContext context, TextEncoder encoder)
+        public static async Task<string> RenderAsync(this IFluidTemplate template, TemplateContext context, TextEncoder encoder)
         {
             if (context == null)
             {
@@ -69,11 +69,11 @@ namespace Fluid
         public static string Render(this IFluidTemplate template, TemplateContext context)
         {
             var task = template.RenderAsync(context);
-            return task.IsCompletedSuccessfully ? task.Result : task.AsTask().GetAwaiter().GetResult();
+            return task.IsCompletedSuccessfully() ? task.Result : task.GetAwaiter().GetResult();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ValueTask<string> RenderAsync(this IFluidTemplate template)
+        public static Task<string> RenderAsync(this IFluidTemplate template)
         {
             return template.RenderAsync(new TemplateContext());
         }
@@ -82,7 +82,7 @@ namespace Fluid
         public static string Render(this IFluidTemplate template)
         {
             var task = template.RenderAsync();
-            return task.IsCompletedSuccessfully ? task.Result : task.AsTask().GetAwaiter().GetResult();
+            return task.IsCompletedSuccessfully() ? task.Result : task.GetAwaiter().GetResult();
         }
     }
 }

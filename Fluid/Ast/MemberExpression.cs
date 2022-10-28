@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Fluid.Utils;
 using Fluid.Values;
 
 namespace Fluid.Ast
@@ -19,7 +20,7 @@ namespace Fluid.Ast
 
         public List<MemberSegment> Segments { get; }
 
-        public override ValueTask<FluidValue> EvaluateAsync(TemplateContext context)
+        public override Task<FluidValue> EvaluateAsync(TemplateContext context)
         {
             // The first segment can only be an IdentifierSegment
 
@@ -37,7 +38,7 @@ namespace Fluid.Ast
             {
                 if (context.Model == null)
                 {
-                    return new ValueTask<FluidValue>(value);
+                    return Task.FromResult(value);
                 }
 
                 start = 0;
@@ -49,7 +50,7 @@ namespace Fluid.Ast
                 var s = Segments[i];
                 var task = s.ResolveAsync(value, context);
 
-                if (!task.IsCompletedSuccessfully)
+                if (!task.IsCompletedSuccessfully())
                 {
                     return Awaited(task, context, Segments, i + 1);
                 }
@@ -59,15 +60,15 @@ namespace Fluid.Ast
                 // Stop processing as soon as a member returns nothing
                 if (value.IsNil())
                 {
-                    return new ValueTask<FluidValue>(value);
+                    return Task.FromResult(value);
                 }
             }
 
-            return new ValueTask<FluidValue>(value);
+            return Task.FromResult(value);
         }
 
-        private static async ValueTask<FluidValue> Awaited(
-            ValueTask<FluidValue> task,
+        private static async Task<FluidValue> Awaited(
+            Task<FluidValue> task,
             TemplateContext context,
             List<MemberSegment> segments,
             int startIndex)

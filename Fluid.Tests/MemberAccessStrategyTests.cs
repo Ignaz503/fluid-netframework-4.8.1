@@ -1,4 +1,5 @@
 ﻿using Fluid.Accessors;
+using Fluid.Json;
 using Fluid.Tests.Domain;
 using Fluid.Values;
 using Newtonsoft.Json.Linq;
@@ -15,6 +16,12 @@ namespace Fluid.Tests
 #else
         private static FluidParser _parser = new FluidParser();
 #endif
+
+        public MemberAccessStrategyTests()
+        {
+            JsonFactory.WriterFactory = (str, options) => new JsonWriterWrapper(str, options);
+            JsonFactory.OptionsFactory = () => new JsonOptionsWrapper();
+        }
 
         [Fact]
         public void RegisterByTypeAddPublicFields()

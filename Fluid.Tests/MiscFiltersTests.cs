@@ -1,17 +1,81 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Fluid.Filters;
+using Fluid.Json;
+using Fluid.Utils;
 using Fluid.Values;
 using Xunit;
 
 namespace Fluid.Tests
 {
+    class JsonWriterWrapper : Fluid.Json.IUtf8JsonWriter 
+    {
+        Utf8JsonWriter _writer;
+
+        public JsonWriterWrapper(Stream stream, IJsonWriterOptions options)
+        {
+            _writer = new System.Text.Json.Utf8JsonWriter(stream, new JsonWriterOptions() { Indented = options.Indented });
+        }
+
+        public void Dispose() => _writer.Dispose();
+
+        public async Task DisposeAsync() => await _writer.DisposeAsync();
+
+        public void WriteBooleanValue(bool value)
+            => _writer.WriteBooleanValue(value);
+
+        public void WriteEndArray() 
+            => _writer.WriteEndArray();
+
+        public void WriteEndObject() 
+            => _writer.WriteEndObject();
+
+        public void WriteNullValue()
+            => _writer.WriteNullValue();
+
+        public void WriteNumberValue(decimal number)
+            => _writer.WriteNumberValue(number);
+
+        public void WritePropertyName(string key)
+            => _writer.WritePropertyName(key);
+
+        public void WriteStartArray()
+            => _writer.WriteStartArray();
+
+        public void WriteStartObject()
+            => _writer.WriteStartObject();
+
+        public void WriteStringValue(DateTime dateTime)
+            => _writer.WriteStringValue(dateTime);
+
+        public void WriteStringValue(DateTimeOffset dateTime)
+            => _writer.WriteStringValue(dateTime);
+
+        public void WriteStringValue(string value)
+            => _writer.WriteStringValue(value);
+    }
+
+    struct JsonOptionsWrapper : IJsonWriterOptions
+    {
+        public bool Indented { get; set; }
+    }
+
     public class MiscFiltersTests
     {
         private static readonly TimeZoneInfo Pacific = TimeZoneConverter.TZConvert.GetTimeZoneInfo("America/Los_Angeles");
         private static readonly TimeZoneInfo Eastern = TimeZoneConverter.TZConvert.GetTimeZoneInfo("America/New_York");
+
+
+        public MiscFiltersTests()
+        {
+            JsonFactory.WriterFactory = (str, options) => new JsonWriterWrapper(str, options);
+            JsonFactory.OptionsFactory = () => new JsonOptionsWrapper();
+            TimeZoneHelper.InfoGetter = TimeZoneConverter.TZConvert.TryGetTimeZoneInfo;
+        }
 
         [Fact]
         public async Task DefaultReturnsValueIfDefined()
